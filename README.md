@@ -29,8 +29,8 @@ curl -sfL https://raw.githubusercontent.com/smb-h/dnsmod/main/install.sh | sudo 
 ```
 
 # Dependencies
-1. python3
-2. python3 requests library
+1. python 3
+2. python 3 requests library
 
 # LICENSE
 Project is under GPL3

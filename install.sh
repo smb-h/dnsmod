@@ -18,7 +18,6 @@ tag_name=$(curl --silent https://api.github.com/repos/$repo/releases/latest \
                   | grep '"tag_name"' \
                   | sed --regexp-extended 's/.*"([^"]+)".*/\1/')
 curl -sfL "https://github.com/$repo/releases/download/$tag_name/dnsmod.py" --output dnsmod.py
-echo "done"
 
 # Copy
 echo "Installing ..."
@@ -26,7 +25,7 @@ mv dnsmod.py "$install_path"
 echo "Done! ;)"
 
 # Permission
-echo "making script executable..."
+echo "Making script executable ..."
 chmod +x "$install_path"
 echo "done"
 
