@@ -1,5 +1,5 @@
 # DNSMod
-Fastest and easiest tool to update system wide DNS with help of some predefined providers. (Cloudflare, shecan, ...)
+Fastest and easiest tool to update system wide DNS with help of some predefined providers. (Cloudflare, Shecan, ...)
 <br>
 
 ```bash
@@ -31,3 +31,6 @@ curl -sfL https://raw.githubusercontent.com/smb-h/dnsmod/main/install.sh | sudo 
 
 # LICENSE
 Project is under GPL3
+
+
+Inspired from [!Ali](https://github.com/ali77gh/shecan-cli)
