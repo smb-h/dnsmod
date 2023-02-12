@@ -1,8 +1,8 @@
 # DNSMod
 Fastest and easiest tool to update system wide *DNS* with help of some predefined providers. 
- - <a href="https://shecan.ir/" target="_blank">Shecan</a>
- - <a href="https://www.cloudflare.com/" target="_blank">Cloudflare</a>
- - , ...
+ - [Shecan](https://shecan.ir/)
+ - [Cloudflare](https://www.cloudflare.com/)
+ - ...
 <br>
 
 ```bash
