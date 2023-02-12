@@ -1,20 +1,19 @@
-# Shecan-cli
-Simple python script for enable and disable shecan.ir dns for gnu/linux and MacOS users.
+# DNSMod
+Fastest and easiest tool to update system wide DNS with help of some predefined providers. (Cloudflare, shecan, ...)
 <br>
-<center><img src="./logo.png" width=200></center> <br>
 
 ```bash
 ┌────────────────────────────────────────────────────────┐
-│                        shecan-cli                      │
-│ > https://github.com/ali77gh/shecan-cli                │
+│                        DNSMod                          │
+│ > https://github.com/smb-h/dnsmod                      │
 │                                                        │
 ├────────────────────────────┬───────────────────────────┤
 │ > how to use:              │                           │
-│   shecan-cli help          │ show this beautiful msg   │
-│   shecan-cli status        │ show status (local&remote)│
-│   shecan-cli enable        │ enables shecan DNS        │
-│   shecan-cli disable       │ load your old DNS config  │
-│   shecan-cli live_status   │ run status in loop        │
+│   dnsmod help              │ show this beautiful msg   │
+│   dnsmod status            │ show status (local&remote)│
+│   dnsmod enable            │ enables shecan DNS        │
+│   dnsmod disable           │ load your old DNS config  │
+│   dnsmod live_status       │ run status in loop        │
 │                            │                           │
 └────────────────────────────┴───────────────────────────┘
 
@@ -23,13 +22,12 @@ Simple python script for enable and disable shecan.ir dns for gnu/linux and MacO
 # Install/Update with one simple command:
 
 ```bash
-curl -sfL https://raw.githubusercontent.com/ali77gh/shecan-cli/master/install.sh | sudo bash -
+curl -sfL https://raw.githubusercontent.com/smb-h/dnsmod/main/install.sh | sudo bash -
 ```
 
 # Dependencies
 1. python3
-2. requests library for python3
+2. python3 requests library
 
 # LICENSE
 Project is under GPL3
-
