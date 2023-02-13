@@ -1,226 +1,208 @@
 #!/usr/bin/env python3
 
+import argparse
 import os
-import os.path
 import platform
 import sys
+from time import sleep
 
 import requests
 
-platform = platform.system()
-from time import sleep
-
-# global configs
-ping_check_url = "https://google.com"
-shecan_check_url = (
-    "https://check.shecan.ir:8443"  # provided by sniffing shecan.ir xhr request :)
-)
-shecan_dns = ["185.51.200.2", "178.22.122.100"]
-
-# linux configs
-dns_file = "/etc/resolv.conf"
-dns_file_bak = "/etc/resolv.conf.shecan.bak"
-
-# OS X configs
-interface = "Wi-Fi"
-dns_file_bak_mac = "/var/root/.dnsmod"
+VERSION = "1.0.0"
+CONNECTION_TEST_URL = "https://google.com"
+PING_TEST_IP = "1.1.1.1"
 
 
-def bool_to_status(bool_value):
-    if bool_value:
-        return "OK"
-    else:
-        return "Err"
+def dns_providers():
+    dns = {
+        "Shecan": ["178.22.122.100", "185.51.200.2"],
+        "Cloudflare": ["1.1.1.1", "1.0.0.1"],
+        "Google": ["8.8.8.8", "8.8.4.4"],
+        "OpenDNS": ["208.67.222.222", "208.67.220.220"],
+        "AdGuard": ["94.140.14.14", "94.140.15.15"],
+        "403": ["10.202.10.202", "10.202.10.102"],
+    }
+    return dns
 
 
-class LinuxDNSUtils:
-    @staticmethod
-    def get_resolv_conf() -> str:
-        resolv_conf_content = "# Writed by dnsmod \n"
-        resolv_conf_content += f"# your previous dns config is in {dns_file_bak}\n"
-        resolv_conf_content += (
-            f"# you can restore your dns config by running > dnsmod disable\n\n"
-        )
-        for dns_server in shecan_dns:
-            resolv_conf_content += f"nameserver {dns_server}\n"
-        return resolv_conf_content
+# DNSMod main class
+class DNSMod:
+    """
+    This is the main class to manage DNS.
+    """
 
-    @staticmethod
-    def local_status() -> bool:
-        file = open(dns_file, "r")
-        content = file.read()
-        file.close()
-        if content == LinuxDNSUtils.get_resolv_conf():
+    def __init__(self, args) -> None:
+        self.system = platform.system()
+        self.args = args
+
+        self.check_permissions()
+
+        if self.system == "Linux":
+            self.dns_path = "/etc/resolv.conf"
+            self.dns_bak_path = "/etc/resolv.conf.bak"
+        # TODO: add MacOS support
+        elif self.system == "Darwin":
+            pass
+
+        self.backup_dns()
+
+    # Backup DNS
+    def backup_dns(self) -> None:
+        """
+        Backup the current DNS config.
+        """
+        if self.system == "Linux" and os.path.isfile(self.dns_path):
+            with open(self.dns_path, "r") as f:
+                dns = f.read()
+            with open(self.dns_bak_path, "w") as f:
+                f.write(dns)
+        # TODO: add MacOS support
+        elif self.system == "Darwin":
+            pass
+
+    # Restore DNS
+    def restore_dns(self) -> None:
+        """
+        Restore the DNS config.
+        """
+        if self.system == "Linux" and os.path.isfile(self.dns_bak_path):
+            with open(self.dns_bak_path, "r") as f:
+                dns = f.read()
+            with open(self.dns_path, "w") as f:
+                f.write(dns)
+        # TODO: add MacOS support
+        elif self.system == "Darwin":
+            pass
+
+    # Test connection
+    def test_connection(self) -> bool:
+        """
+        Test the connection.
+        """
+        try:
+            requests.get(CONNECTION_TEST_URL, timeout=5)
+            print("Connection test passed ...")
+            print("Good luck Have Fun! :)")
+            os.system("ping -c 4 " + PING_TEST_IP)
             return True
-        else:
+        except Exception as e:
+            print("Connection test failed ...")
+            print("Restoring previous DNS config ...")
+            print("Try another DNS provider.")
+            os.system("ping -c 4 " + PING_TEST_IP)
             return False
 
-    @staticmethod
-    def enable():
-        if LinuxDNSUtils.local_status():
-            print("shecan is already enabled")
-            exit(0)
+    # Check provider
+    def check_provider(self, provider) -> None:
+        """
+        Check if the provider is secure.
+        """
+        if provider == "403":
+            print("WARNING: This provider is government based and probably not secure!")
 
-        # backup
-        os.system(f"cp {dns_file} {dns_file_bak}")
+    # Check permissions
+    def check_permissions(self) -> None:
+        """
+        Check if the user has the required permissions.
+        """
+        if self.system == "Linux":
+            if os.geteuid() != 0:
+                print("You need to have root privileges to run this.")
+                print("Try again, this time using 'sudo'. May we meet again!")
+                sys.exit(1)
+        # TODO: add MacOS support
+        elif self.system == "Darwin":
+            pass
 
-        # enable
-        file = open(dns_file, "w")
-        file.write(LinuxDNSUtils.get_resolv_conf())
-        file.close()
-        print("shecan enabled")
+    # Set DNS
+    def set_dns(self) -> None:
+        """
+        Set the DNS config.
+        """
+        dns = dns_providers()
+        if self.args.provider != None:
+            dns = dns[self.args.provider]
+        elif self.args.custom != None:
+            dns = self.args.custom
+        self.check_provider(self.args.provider)
 
-    @staticmethod
-    def disable():
-        if not os.path.isfile(dns_file_bak):
-            print("shecan is already disabled")
-            exit(0)
-        os.system(f"mv {dns_file_bak} {dns_file}")
-        print("shecan disabled")
+        if self.system == "Linux":
+            with open(self.dns_path, "w") as f:
+                f.write(
+                    f"# Overwritten by DNSMod v{VERSION} - Provider: {self.args.provider} \n"
+                )
+                f.write(f"# Previous DNS config at {self.dns_bak_path} \n \n")
+                f.write(f"nameserver {dns[0]} \n")
+                f.write(f"nameserver {dns[1]} \n")
+        # TODO: add MacOS support
+        elif self.system == "Darwin":
+            pass
 
+        # Test connection
+        self.test_connection()
 
-class DarwinDNSUtils:
-    def get_current_dns():
-        return (
-            os.popen(f"networksetup -getdnsservers {interface}")
-            .read()
-            .replace("\n", " ")
-        )
-
-    @staticmethod
-    def get_shecan_dns_list() -> str:
-        return " ".join(shecan_dns) + " "
-
-    @staticmethod
-    def local_status() -> bool:
-        return DarwinDNSUtils.get_shecan_dns_list() == DarwinDNSUtils.get_current_dns()
-
-    @staticmethod
-    def enable():
-        # backup
-        f = open(dns_file_bak_mac, "w")
-        f.write(DarwinDNSUtils.get_current_dns())
-
-        # enable
-        os.system(
-            f"networksetup -setdnsservers {interface} {DarwinDNSUtils.get_shecan_dns_list()}"
-        )
+    # Update DNSMod
+    def update(self) -> None:
+        """
+        Update DNSMod.
+        """
+        # TODO: add update feature
         pass
 
-    @staticmethod
-    def disable():
-        f = open(dns_file_bak_mac, "r")
-        old_dns = f.read()
-        os.system(f"networksetup -setdnsservers {interface} {old_dns}")
-        pass
+    # Do the magic :)
+    def do_magic(self) -> None:
+        """
+        Do the magic.
+        """
+        self.set_dns()
 
 
-def enable():
-    if platform == "Linux":
-        LinuxDNSUtils.enable()
-    elif platform == "Darwin":
-        DarwinDNSUtils.enable()
-    else:
-        print(f"{platform} is not supported")
-
-
-def disable():
-    if platform == "Linux":
-        LinuxDNSUtils.disable()
-    elif platform == "Darwin":
-        DarwinDNSUtils.disable()
-    else:
-        print(f"{platform} is not supported")
-
-
-def local_status():
-    if platform == "Linux":
-        return LinuxDNSUtils.local_status()
-    elif platform == "Darwin":
-        return DarwinDNSUtils.local_status()
-    else:
-        print(f"{platform} is not supported")
-
-
-def ping_status():
-    try:
-        r = requests.get("http://www.google.com", timeout=5)
-        return True
-    except (requests.ConnectionError, requests.Timeout) as exception:
-        return False
-
-
-def remote_status():
-    try:
-        r = requests.get(shecan_check_url, timeout=5)
-        return True
-    except (requests.ConnectionError, requests.Timeout) as exception:
-        return False
-
-
-def status():
-    print("local\t\tping\t\tisShecanized")
-    print(bool_to_status(local_status()) + "\t\t", end="")
-    print(bool_to_status(ping_status()) + "\t\t", end="")
-    print(bool_to_status(remote_status()) + "\t\t")
-
-
-def live_status():
-    while True:
-        try:
-            os.system("clear")
-            status()
-            sleep(2)
-        except KeyboardInterrupt:
-            exit(0)
-
-
-def show_permission_error():
-    print("┌───────────────────────────────────────────────────────┐")
-    print("│ Permission denied. you may need to run with 'sudo'    │")
-    print("└───────────────────────────────────────────────────────┘")
-
-
-def show_help():
-    print("┌────────────────────────────────────────────────────────┐")
-    print("│                        dnsmod                      │")
-    print("│ > https://github.com/ali77gh/dnsmod                │")
-    print("│                                                        │")
-    print("├────────────────────────────┬───────────────────────────┤")
-    print("│ > how to use:              │                           │")
-    print("│   dnsmod help          │ show this beautiful msg   │")
-    print("│   dnsmod status        │ show status (local&remote)│")
-    print("│   dnsmod enable        │ enables shecan DNS        │")
-    print("│   dnsmod disable       │ load your old DNS config  │")
-    print("│   dnsmod live_status   │ run status in loop        │")
-    print("│                            │                           │")
-    print("└────────────────────────────┴───────────────────────────┘")
-
-
-def main_switch(argv):
-    if argv == "enable":
-        enable()
-    elif argv == "disable":
-        disable()
-    elif argv == "status":
-        status()
-    elif argv == "live_status":
-        live_status()
-    elif argv == "help":
-        show_help()
-    else:
-        print("unkown param: " + argv)
-        show_help()
+# handler
+def handler(args):
+    app = DNSMod(args)
+    app.do_magic()
 
 
 def main():
-    if len(sys.argv) != 2:
-        show_help()
-    else:
-        try:
-            main_switch(sys.argv[1])
-        except PermissionError:
-            show_permission_error()
+    dns = dns_providers()
+    parser = argparse.ArgumentParser(description="DNSMod")
+    # providers
+    parser.add_argument(
+        "-p",
+        "--provider",
+        help=f"Choose a DNS provider from {dns.keys()}",
+        type=str,
+        action="store",
+        default=list(dns.keys())[1],
+    )
+    # custom (2 ip)
+    parser.add_argument(
+        "-c",
+        "--custom",
+        help="Use custom DNS",
+        nargs=2,
+        type=str,
+        action="store",
+        metavar=("DNS1", "DNS2"),
+        default=None,
+    )
+    parser.add_argument(
+        "-v", "--version", help="Show version", action="store_true", default=VERSION
+    )
+    parser.add_argument(
+        "-u", "--update", help="Update DNSMod", action="store_true", default=False
+    )
+    args = parser.parse_args()
+    # if there is nor provider or custom
+    if args.provider == None and args.custom == None:
+        print("Choose a provider or use custom DNS!")
+        exit()
+    # if there is a provider and custom
+    if args.provider != None and args.custom != None:
+        print("Either choose a provider or use custom DNS!")
+        exit()
+
+    handler(args)
 
 
 if __name__ == "__main__":
