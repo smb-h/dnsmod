@@ -31,7 +31,16 @@ curl -sfL https://raw.githubusercontent.com/smb-h/dnsmod/main/install.sh | sudo 
 
 # Dependencies
 1. python 3
-2. python 3 requests library
+
+# TODO
+- [ ] Add more providers
+- [ ] Add MacOS support
+- [ ] Add Windows support
+- [ ] Add restore functionality (arguments: -r, --restore) or (arguments: -d, --disable)
+- [ ] Add functionality to check if current DNS is modified by DNSMod (arguments: -c, --check)
+- [ ] Add update functionality (arguments: -u, --update)
+- [ ] Make messages colorful (warnings in yellow, errors in red, success in green)
+
 
 # LICENSE
 Project is under GPL3.
