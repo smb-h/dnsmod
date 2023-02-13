@@ -1,4 +1,3 @@
-- Add MacOS support
 - Add Windows support
 - Add update functionality (arguments: -u, --update)
 - Make messages colorful (warnings in yellow, errors in red, success in green)

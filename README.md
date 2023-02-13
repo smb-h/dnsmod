@@ -1,5 +1,6 @@
 # DNSMod
 Fastest and easiest tool to update system wide *DNS* with help of some predefined providers. 
+Here is a list of providers that are currently supported:
  - [Shecan](https://shecan.ir/)
  - [Cloudflare](https://www.cloudflare.com/dns/)
  - [Google](https://developers.google.com/speed/public-dns/)
@@ -7,6 +8,7 @@ Fastest and easiest tool to update system wide *DNS* with help of some predefine
  - [AdGuard](https://adguard-dns.io/en/public-dns.html)
  - [403](https://403.online/download)
  - ...
+Feel free to add more providers by creating a pull request. :)
 <br>
 
 ### Usage:
@@ -16,8 +18,16 @@ To change DNS to Shecan:
 sudo dnsmod -p Shecan
 ```
 
+Or to change DNS to Cloudflare:
 ```bash
+sudo dnsmod -p Cloudflare
 ```
+
+Or even a custom DNS:
+```bash
+sudo dnsmod -s 1.2.3.4 5.6.7.8
+```
+
 
 ```
 options:
@@ -45,7 +55,6 @@ curl -sfL https://raw.githubusercontent.com/smb-h/dnsmod/main/install.sh | sudo 
 
 # TODO
 - [ ] Add more providers
-- [ ] Add MacOS support
 - [ ] Add Windows support
 - [ ] Add update functionality (arguments: -u, --update)
 - [ ] Make messages colorful (warnings in yellow, errors in red, success in green)
