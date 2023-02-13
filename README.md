@@ -7,7 +7,7 @@ Here is a list of providers that are currently supported:
  - [Google](https://developers.google.com/speed/public-dns/)
  - [OpenDNS](https://www.opendns.com/)
  - [AdGuard](https://adguard-dns.io/en/public-dns.html)
- - [403](https://403.online/download)
+ - [403 (unsafe, gov related)](https://403.online/download)
  - ...
 
 Feel free to add more providers by creating a pull request. :)
