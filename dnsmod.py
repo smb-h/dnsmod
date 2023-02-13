@@ -52,10 +52,7 @@ class DNSMod:
         Backup the current DNS config.
         """
         if self.system == "Linux" and os.path.isfile(self.dns_path):
-            with open(self.dns_path, "r") as f:
-                dns = f.read()
-            with open(self.dns_bak_path, "w") as f:
-                f.write(dns)
+            os.system(f"cp {self.dns_path} {self.dns_bak_path}")
         # TODO: add MacOS support
         elif self.system == "Darwin":
             pass
@@ -66,10 +63,9 @@ class DNSMod:
         Restore the DNS config.
         """
         if self.system == "Linux" and os.path.isfile(self.dns_bak_path):
-            with open(self.dns_bak_path, "r") as f:
-                dns = f.read()
-            with open(self.dns_path, "w") as f:
-                f.write(dns)
+            os.rename(self.dns_bak_path, self.dns_path)
+            print("Previous DNS config has been restored ...")
+            self.test_connection()
         # TODO: add MacOS support
         elif self.system == "Darwin":
             pass
@@ -83,13 +79,12 @@ class DNSMod:
             requests.get(CONNECTION_TEST_URL, timeout=5)
             print("Connection test passed ...")
             print("Good luck Have Fun! :)")
-            os.system("ping -c 4 " + PING_TEST_IP)
+            # os.system("ping -c 4 " + PING_TEST_IP)
             return True
         except Exception as e:
             print("Connection test failed ...")
-            print("Restoring previous DNS config ...")
-            print("Try another DNS provider.")
-            os.system("ping -c 4 " + PING_TEST_IP)
+            print("Try another DNS provider. -_-")
+            # os.system("ping -c 4 " + PING_TEST_IP)
             return False
 
     # Check provider
@@ -160,7 +155,14 @@ class DNSMod:
 # handler
 def handler(args):
     app = DNSMod(args)
-    app.do_magic()
+    if args.update:
+        app.update()
+    elif args.version:
+        print(f"DNSMod v{VERSION}")
+    elif args.restore:
+        app.restore_dns()
+    else:
+        app.do_magic()
 
 
 def main():
@@ -187,10 +189,13 @@ def main():
         default=None,
     )
     parser.add_argument(
-        "-v", "--version", help="Show version", action="store_true", default=VERSION
+        "-v", "--version", help="Show version", action="store_true", default=False
     )
     parser.add_argument(
         "-u", "--update", help="Update DNSMod", action="store_true", default=False
+    )
+    parser.add_argument(
+        "-r", "--restore", help="Restore DNS", action="store_true", default=False
     )
     args = parser.parse_args()
     # if there is nor provider or custom
@@ -202,6 +207,7 @@ def main():
         print("Either choose a provider or use custom DNS!")
         exit()
 
+    print(args)
     handler(args)
 
 

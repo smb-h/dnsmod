@@ -1,6 +1,5 @@
 - Add MacOS support
 - Add Windows support
-- Add restore functionality (arguments: -r, --restore) or (arguments: -d, --disable)
 - Add functionality to check if current DNS is modified by DNSMod (arguments: -c, --check)
 - Add update functionality (arguments: -u, --update)
 - Make messages colorful (warnings in yellow, errors in red, success in green)
