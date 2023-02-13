@@ -71,7 +71,7 @@ class DNSMod:
             pass
 
     # Test connection
-    def test_connection(self) -> bool:
+    def test_connection(self) -> None:
         """
         Test the connection.
         """
@@ -79,13 +79,16 @@ class DNSMod:
             requests.get(CONNECTION_TEST_URL, timeout=5)
             print("Connection test passed ...")
             print("Good luck Have Fun! :)")
-            # os.system("ping -c 4 " + PING_TEST_IP)
-            return True
         except Exception as e:
             print("Connection test failed ...")
-            print("Try another DNS provider. -_-")
-            # os.system("ping -c 4 " + PING_TEST_IP)
-            return False
+            print("Try another DNS provider. T_T")
+
+    # Test connection via ping
+    def test_connection_ping(self) -> None:
+        """
+        Test the connection via ping.
+        """
+        os.system("ping -c 4 " + PING_TEST_IP)
 
     # Check provider
     def check_provider(self, provider) -> None:
@@ -161,6 +164,9 @@ def handler(args):
         print(f"DNSMod v{VERSION}")
     elif args.restore:
         app.restore_dns()
+    elif args.test:
+        app.test_connection_ping()
+        app.test_connection()
     else:
         app.do_magic()
 
@@ -196,6 +202,13 @@ def main():
     )
     parser.add_argument(
         "-r", "--restore", help="Restore DNS", action="store_true", default=False
+    )
+    parser.add_argument(
+        "-t",
+        "--test",
+        help="Test connection",
+        action="store_true",
+        default=False,
     )
     args = parser.parse_args()
     # if there is nor provider or custom
