@@ -1,5 +1,6 @@
 # DNSMod
 Fastest and easiest tool to update system wide *DNS* with help of some predefined providers. 
+
 Here is a list of providers that are currently supported:
  - [Shecan](https://shecan.ir/)
  - [Cloudflare](https://www.cloudflare.com/dns/)
@@ -8,6 +9,7 @@ Here is a list of providers that are currently supported:
  - [AdGuard](https://adguard-dns.io/en/public-dns.html)
  - [403](https://403.online/download)
  - ...
+
 Feel free to add more providers by creating a pull request. :)
 <br>
 
