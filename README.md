@@ -5,6 +5,7 @@ Fastest and easiest tool to update system wide *DNS* with help of some predefine
  - ...
 <br>
 
+### Usage:
 ```bash
 ┌────────────────────────────────────────────────────────┐
 │                        DNSMod                          │
@@ -33,7 +34,7 @@ curl -sfL https://raw.githubusercontent.com/smb-h/dnsmod/main/install.sh | sudo 
 2. python 3 requests library
 
 # LICENSE
-Project is under GPL3
+Project is under GPL3.
 
 
-Inspired from [Ali](https://github.com/ali77gh/shecan-cli)
+Inspired by [Ali](https://github.com/ali77gh/shecan-cli)
