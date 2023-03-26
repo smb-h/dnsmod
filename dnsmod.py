@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 
 import requests
 
-VERSION = "1.0.2"
+VERSION = "1.0.4"
 CONNECTION_TEST_URL = "https://google.com"
 PING_TEST_IP = "1.1.1.1"
 
