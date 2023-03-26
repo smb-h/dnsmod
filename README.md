@@ -8,7 +8,7 @@ Here is a list of providers that are currently supported:
  - [OpenDNS](https://www.opendns.com/)
  - [AdGuard](https://adguard-dns.io/en/public-dns.html)
  - [403 (unsafe, Iranian gov based)](https://403.online/download)
- - [Radar game(unsafe, Iranian gov based)](https://radar.game/#/dns)
+ - [RadarGame(unsafe, Iranian gov based)](https://radar.game/#/dns)
  - ...
 
 Feel free to add more providers by creating a pull request. :)
