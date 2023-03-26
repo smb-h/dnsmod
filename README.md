@@ -8,6 +8,7 @@ Here is a list of providers that are currently supported:
  - [OpenDNS](https://www.opendns.com/)
  - [AdGuard](https://adguard-dns.io/en/public-dns.html)
  - [403 (unsafe, Iranian gov based)](https://403.online/download)
+ - [Radar game(unsafe, Iranian gov based)](https://radar.game/#/dns)
  - ...
 
 Feel free to add more providers by creating a pull request. :)
@@ -34,7 +35,7 @@ sudo dnsmod -s 1.2.3.4 5.6.7.8
 ```
 options:
   -h, --help            show this help message and exit
-  -p {Shecan,Cloudflare,Google,OpenDNS,AdGuard,403}, --provider {Shecan,Cloudflare,Google,OpenDNS,AdGuard,403}
+  -p {Shecan, Cloudflare, Google, OpenDNS, AdGuard, 403, RadarGame}, --provider {Shecan, Cloudflare, Google, OpenDNS, AdGuard, 403, RadarGame}
                         Choose a DNS provider from Shecan, Cloudflare, Google, OpenDNS, AdGuard, 403
   -s DNS1 DNS2, --set DNS1 DNS2
                         Set custom DNS
