@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 
 import requests
 
-VERSION = "1.0.4"
+VERSION = "1.0.5"
 CONNECTION_TEST_URL = "https://google.com"
 PING_TEST_IP = "1.1.1.1"
 
@@ -59,7 +59,7 @@ class DNSModAbs(ABC):
         Test the connection.
         """
         try:
-            requests.get(CONNECTION_TEST_URL, timeout=5)
+            requests.get(CONNECTION_TEST_URL, allow_redirects=False, timeout=5)
             print("Connection test passed ...")
             print("Good luck have fun! :)")
         except Exception as e:
